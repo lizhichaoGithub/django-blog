@@ -16,7 +16,15 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
+EMAIL_HOST = 'smtp.qq.com'
+# 设置端口号，为数字
+EMAIL_PORT = 25
+#设置发件人邮箱
+EMAIL_HOST_USER = '1693922728@qq.com'
+EMAIL_HOST_PASSWORD = 'lfbzzjjxhvunbedc'
+# 设置是否启用安全链接
+EMAIL_USER_TLS = True
+AUTH_USER_MODEL = 'blog.User'
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
@@ -120,8 +128,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATIC_URL = '/static/'
-
+STATIC_URL = '/static/'     # 别名
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "blog/static"),
+]
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 

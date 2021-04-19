@@ -1,0 +1,25 @@
+{% extends 'layout.html' %}
+
+{% block head %}
+    <title>{{ article.title }}</title>
+{% endblock %}
+
+{% block body %}
+    <div class="container p-0 " >
+        <div class="jumbotron" style="min-height: 500px;">
+
+
+            <div class="card">
+                <div class="card-header  text-center p-3">
+                    <h3>{{ article.title }}</h3>
+                    <div class="card-subtitle text-muted  text-center p-3"><a
+                            href="userzone?username={{ user.nickname }} }}">{{ article.username }}</a>&nbsp;&nbsp;{{ article.date }}
+                    </div>
+                </div>
+                <div class="card-body  text-center p-3">
+                    <div class="card-text">{{ article.content }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,106 +1,110 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
-    <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
-    <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
+{% extends 'layout.html' %}
 
-    <link rel="stylesheet" href="css/style.css">
+{% block head %}
     <title>注册</title>
-</head>
-<body>
-<div class="jumbotron jumbotron-fluid bg-dark text-light"
-     style="margin-bottom:0; height: 200px;display: flex;justify-content: space-between">
-    <div style="width: 60%;padding-left: 50px;">
-        <h1 class="display-5">混沌世界</h1>
-        <h2 class="text-secondary"> -- 书写朴实无华且有趣的生活</h2>
+{% endblock %}
+{% block body %}
+    <div class="container p-5 mt-5" style="background-color: rgb(233,236,239);width: 50%;border-radius: 30px;">
+        <form method="POST" action="/register">
+            <div class="form-group">
+                <label>昵称:<p class="text-danger" id="nickname-msg">{{ nickname_msg }}</p></label>
+                <input type="text" value="{{ nickname }}" required="required" class="form-control" id="nickname"
+                       name="nickname">
+                <p class=" text-danger" id="nickname-msg"></p>
+            </div>
+            <div class="form-group">
+                <label for="email">邮箱:<p class="text-danger" id="email-msg">{{ email_msg }}</p></label>
+                <input type="email" value="{{ email }}" class="form-control" required="required" id="email"
+                       name="email">
+                <button type="button" class="btn btn-info" id="codebtn">获取验证码</button>
+                <p class=" text-danger" id="email-msg"></p>
+            </div>
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="pwd">验证码:<p class="text-danger" id="email-msg">{{ vcode_msg }}</label>
+                <input type="text" required="required" class="form-control" id="code" name="vcode">
+            </div>
+            <div class="form-group">
+                <label for="pwd">密码:</label>
+                <input type="password" value="{{ password }}" required="required" class="form-control" id="pwd"
+                       name="password">
+                <p class=" text-danger" id="pwd-msg"></p>
+            </div>
+            <div class="form-group">
+                <label for="pwd">重复密码:</label>
+                <input type="password" value="{{ password2 }}" required="required" class="form-control" id="pwd2"
+                       name="password2">
+                <p class=" text-danger" id="pwd2-msg"></p>
+            </div>
+
+            <button type="submit" onsubmit="checkPassword()" class="btn btn-primary">注册</button>
+        </form>
     </div>
-    
-</div>
-<hr/>
-<div class="container" style="width:40%;">
-    <form method="POST">
-  <div class="form-group">
-    <label for="email">邮箱:</label>
-    <input type="email" class="form-control" id="email" name="email">
-    <button type="button" class="btn btn-info" id="codebtn">获取验证码</button>
-  </div>
-  <div class="form-group">
-    <label for="pwd">验证码:</label>
-    <input type="text" class="form-control" id="code" name="code">
-  </div>
-  <div class="form-group">
-    <label for="pwd">密码:</label>
-    <input type="password" class="form-control" id="pwd" name="pwd"><p class=" text-danger" id="pwd-msg"></p>
-  </div>
-  <div class="form-group">
-    <label for="pwd">重复密码:</label>
-    <input type="password" class="form-control" id="pwd2" name="pwd2"> <p class=" text-danger" id="pwd2-msg"></p>
-  </div>
-  
-  <button type="submit" class="btn btn-primary">注册</button>
-</form>
-</div>
-<br/>
-<div class="container">
+    <br/>
+    <div class="container">
 
-</div>
-
-
-</body>
-
+    </div>
+{% endblock %}
+{% block js %}
 <script>
-    $(function(){
-        $('button#codebtn').click(function(){
-            var time = 60;
-           // console.log( $(this).text()+"text");
-            $(this).attr("disabled","true");
-            var inter = setInterval(function(){
-                $('button#codebtn').text(time-- +"s")
-            },1000)
-            setTimeout(function(){
-                clearInterval(inter);
-                $('button#codebtn').removeAttr("disabled");
-                $('button#codebtn').text("获取验证码")
-            },60000)
-            
+    $(function () {
+        $('button#codebtn').click(function () {
             var email = $('#email').val();
-            if( /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)/ .test(email)){
-                $.get("http://127.0.0.1:8001/getvcode?email="+email,function(data,status){
-                    alert("数据: " + data + "\n状态: " + status);
+            if (/^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)/.test(email)) {
+
+                $('#email-msg').text("");
+                $(this).attr("disabled", "true");
+                $.get("/getvcode?email=" + email, function (data, status) {
+                    console.log(data)
+                    if (data.status == "success") {
+                        var time = 60;
+                        // console.log( $(this).text()+"text");
+                        $(this).attr("disabled", "true");
+                        var inter = setInterval(function () {
+                            $('button#codebtn').text(time-- + "s")
+                        }, 1000)
+                        setTimeout(function () {
+                            clearInterval(inter);
+                            $('button#codebtn').removeAttr("disabled");
+                            $('button#codebtn').text("获取验证码")
+                        }, 60000)
+                    } else {
+                        $('#email-msg').text('账户已存在')
+                        $('button#codebtn').removeAttr("disabled");
+                    }
                 });
-            }else{
-                alert('邮箱格式不正确')
+            } else {
+                $('#email-msg').text("格式不正确");
             }
-            
+
         })
-    
-        function checkPassword(){
-            if($('#pwd').val().length >= 8 && $('#pwd-msg').text() == "" && $('#pwd2-msg').text() == "")
+        $('input#email').keyup(function () {
+            $('#email-msg').text("");
+
+        })
+
+        function checkPassword() {
+            if ($('#pwd').val().length >= 8 && $('#pwd-msg').text() == "" && $('#pwd2-msg').text() == "")
                 return true;
-            else 
+            else
                 return false;
         }
-        
-        $('#pwd').keyup(function(){
-            if($(this).val().length < 8 || $(this).val().length > 16){
+
+        $('#pwd').keyup(function () {
+            if ($(this).val().length < 8 || $(this).val().length > 16) {
                 $('#pwd-msg').text("密码长度在8-16位")
-            }else{
+            } else {
                 $('#pwd-msg').text("")
             }
         })
-        $('#pwd2').keyup(function(){
-            if($(this).val() != $('#pwd').val()){
+        $('#pwd2').keyup(function () {
+            if ($(this).val() != $('#pwd').val()) {
                 $('#pwd2-msg').text("密码不一致");
-            }else{
+            } else {
                 $('#pwd2-msg').text("")
             }
         })
-        
-    })
 
+    })
 </script>
-</html>
+{% endblock %}

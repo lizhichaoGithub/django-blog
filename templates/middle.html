@@ -2,9 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>$Title$</title>
+    <title>{{ title }}</title>
 </head>
 <body>
-$END$
+<h1>{{ message }}</h1>
 </body>
+<script>
+    setTimeout(function () {
+        window.location.href="{{ target }}"
+    },1000)
+
+</script>
 </html>

@@ -1,10 +1,51 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'layout.html' %}
+{% block head %}
+    <title>写博客</title>
+{% endblock %}
+{% block container %}
+
+    <div class="container p-5">
+        <form method="POST" action="/newarticle">
+            <div class="form-group">
+                <label for="sel1">文章分类:</label>
+                <select class="form-control" id="sel1" name="type">
+                    <option value="tech">技术类</option>
+                    <option value="life">生活类</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="sel1">私密性:</label>
+                <select class="form-control" id="sell" name="security">
+                    <option value="public">公开</option>
+                    <option value="private">私密</option>
+                </select>
+            </div>
+            <div class="form-group ">
+                <label for="text">标题:</label>
+                <input type="text" required="required" class="form-control" id="title" name="title">
+                <p class="text-danger" id="title-msg">{{ title_msg }}</p>
+            </div>
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="text">摘要:</label>
+                <input type="text" class="form-control" required="required" id="abs" name="abs">
+                <p class=" text-danger" id="abs-msg">{{ abs_msg }}</p>
+            </div>
+            <div class="form-group">
+                <label for="text">关键词（';'分隔多个）:</label>
+                <input type="text" class="form-control" required="required" id="kws" name="keywords">
+                <p class=" text-danger" id="kws-msg">{{ kws_msg }}</p>
+            </div>
+            <div class="form-group">
+                <label for="text">内容:</label>
+                <input type="text" class="form-control" required="required" id="content" name="content"
+                       style="height: 100px;">
+                <p class=" text-danger" id="content-msg">{{ content_msg }}</p>
+            </div>
+            <button type="submit" class="btn btn-primary" id="lg">发布</button>&nbsp;&nbsp;&nbsp;
+            <a
+                    class="btn btn-success"
+                    href="/index">取消</a>
+        </form>
+    </div>
+{% endblock %}
