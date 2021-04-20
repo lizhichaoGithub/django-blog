@@ -77,80 +77,91 @@
 
         </div>
         <hr>
+
         <div class="row">
             <div class="col-12 text-center">
                 <h3>混沌动态</h3>
             </div>
         </div>
+        <div class="nav nav-pills text-light" role='tablist'>
+            <div class="nav nav-pills" id="v-pills-tab" role="tablist">
+                <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab"
+                   aria-controls="v-pills-home" aria-selected="true">学学东西</a>
+                <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab"
+                   aria-controls="v-pills-profile" aria-selected="false">混混日子</a>
+            </div>
+        </div>
+
         <hr>
-        <div class="container p-2 d-flex " style="justify-content: space-between">
+        <div class="container p-2" style="justify-content: space-between">
+            <div class="tab-content" id="v-pills-tabContent">
 
-            <div class="row" style="width: 50%;">
+                <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel"
+                     aria-labelledby="v-pills-home-tab">
+                    <div class="row collapse show" style="" id="tech">
+                        {% for article in articles %}
 
-                <div class="col-12 text-center mb-3">
-                    <div class="card bg-info">
-                        <h3 class="card-title">技术专栏</h3>
+                            <div class="col-sm-12 col-md-12 col-lg-12 ">
+                                <div class="card  rounded text-center mb-3 bg-light">
+                                    <div class="card-body">
+                                        <a target="_blank" href="article?aid={{ article.id }}"><h5
+                                                class="card-title">{{ article.title }}</h5></a>
+                                        <div class="text-truncate">
+                                            {{ article.abs }}
+                                        </div>
+                                    </div>
+                                    <div class="card-footer  text-muted" style="height: 30px;">
+                                        <div class="d-flex justify-content-center ">
+                                            <a href="userzone?nickname={{ article.username }}"><p
+                                                    class="text-muted card-subtitle mb-2">{{ article.username }}</p></a>&nbsp;&nbsp;
+                                            <p class="card-subtitle mb-2">{{ article.date }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+
+
+                    </div>
+
+                </div>
+                <div class="tab-pane fade show active" id="v-pills-profile" role="tabpanel"
+                     aria-labelledby="v-pills-profile-tab">
+
+                    <div class="row" style="" id="life">
+                        {% for life in lifes %}
+                            <div class="col-sm-12 col-md-12 col-lg-12 ">
+                                <div class="card  rounded text-center mb-3 bg-light">
+                                    <div class="card-body">
+                                        <a target="_blank" href="article?aid={{ life.id }}"><h5
+                                                class="card-title">{{ life.title }}</h5></a>
+                                        <div class="text-truncate">
+                                            {{ life.abs }}
+                                        </div>
+                                    </div>
+                                    <div class="card-footer  text-muted" style="height: 30px;">
+                                        <div class="d-flex justify-content-center ">
+                                            <a href="userzone?nickname={{ life.username }}"><p
+                                                    class="text-muted card-subtitle mb-2">{{ life.username }}</p></a>&nbsp;&nbsp;
+                                            <p class="card-subtitle mb-2">{{ life.date }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
                     </div>
                 </div>
-
-                {% for article in articles %}
-
-                <div class="col-sm-12 col-md-12 col-lg-12 " >
-                    <div class="card  rounded text-center mb-3 bg-light">
-                        <div class="card-body">
-                            <a href="article?aid={{ article.id }}"><h5 class="card-title">{{ article.title }}</h5></a>
-                            <div class="text-truncate" >
-                                {{ article.content }}
-                            </div>
-                        </div>
-                        <div class="card-footer  text-muted" style="height: 30px;">
-                             <div class="d-flex justify-content-center ">
-                                <a href="userzone?username={{ user.nickname }} }}"><p class="text-muted card-subtitle mb-2">{{ article.username }}</p></a>&nbsp;&nbsp;
-                                <p class="card-subtitle mb-2">{{ article.date }}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-
-
             </div>
-            <div class="row" style="width: 50%;">
-                <div class="col-12 text-center mb-3">
-                    <div class="card bg-info">
-                        <h3 class="card-title">混沌的日子</h3>
-                    </div>
-                </div>
-
-                <div class="col-sm-12 col-md-12 col-lg-12  p-2 " >
-                    <div class="card  rounded text-center mb-3 bg-light">
-                        <div class="card-header" style="height: 50px;">
-                            <a href="article?aid={{ article.id }}"><h5 class="card-title">{{ article.title }}</h5></a>
-                        </div>
-                        <div class="card-body">
-                            <div class="text-truncate" >
-                                {{ article.abs }}
-                            </div>
-                        </div>
-                        <div class="card-footer  text-muted">
-                             <div class="d-flex justify-content-center ">
-                                <a href="userzone?username={{ user.nickname }} }}"><p class="text-muted card-subtitle mb-2">{{ article.username }}</p></a>&nbsp;&nbsp;
-                                <p class="card-subtitle mb-2">{{ article.date }}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
 
         </div>
-            <hr>
- <div class="row ">
-                <div class="col-12 text-center">没有更多了</div>
-            </div>
+        <hr>
+        <div class="row ">
+            <div class="col-12 text-center">没有更多了</div>
+        </div>
+
     </div>
 
-    <div class="container-fluid p-0 mt-0 text-light" style="background-color: rgb(90 90 97/50%);">
+    <div class="container-fluid p-0 mt-0 text-light" style="background-color: rgb(90 90 97/30%);">
         <div class="row text-center p-5">
             <div class="col-12">
                 <p>混沌博客</p>
@@ -158,4 +169,11 @@
         </div>
     </div>
 
+{% endblock %}
+{% block js %}
+    <script>
+        $(function () {
+        })
+
+    </script>
 {% endblock %}

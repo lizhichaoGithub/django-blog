@@ -1,0 +1,168 @@
+{% extends 'layout.html' %}
+
+{% block head %}
+    <title>{{ it.nickname }}的主页</title>
+{% endblock %}
+
+{% block container %}
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <H1 class="card-title">{{ it.nickname }}</H1>
+                {% if it.nickname ==  user.nickname %}
+                    <div>登录邮箱<p class="">{{ user.username }}</p></div>
+                    <div class="d-flex ">
+                        <h4>密码管理</h4>
+                        <a class="btn btn-primary ml-2 text-light" data-toggle="modal" data-target="#changepwd">修改密码</a>
+                        <a class="btn btn-primary  ml-2 text-light">重置密码</a>
+                    </div>
+
+                {% endif %}
+            </div>
+            <div class="card-body">
+                其他信息：暂无
+            </div>
+        </div>
+        <h2>动态：</h2>
+        <div class="row">
+            {% for article in articles %}
+                <div class="col-lg-4 col-sm-12 col-md-6">
+                    <div class="card  rounded text-center mb-3 bg-light">
+                        <div class="card-body">
+                            <a target="_blank" href="article?aid={{ article.id }}"><h5
+                                    class="card-title">{{ article.title }}</h5></a>
+                            <div class="text-truncate">
+                                {{ article.abs }}
+                            </div>
+                        </div>
+                        <div class="card-footer  text-muted" style="height: 30px;">
+                            <div class="d-flex justify-content-center ">
+                                <a href="userzone?nickname={{ article.username }}"><p
+                                        class="text-muted card-subtitle">{{ article.username }}</p></a>&nbsp;&nbsp;
+                                <p class="card-subtitle mb-2">{{ article.date }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+    </div>
+
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="changepwd" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">修改密码</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form  method="POST" action="/changepwd" onsubmit="return checkPassword()">
+                        <div class="form-group">
+                            <label for="email">邮箱:<p class="text-danger" id="email-msg">{{ email_msg }}</p></label>
+                            <input type="email" value="{{ user.username }}" class="form-control"  id="email"
+                                   name="email">
+                        </div>
+                        {% csrf_token %}
+
+                        <div class="form-group">
+                            <label for="pwd">原密码:</label>
+                            <input type="password" value="{{ password }}" required="required" class="form-control"
+                                   name="oldpassword"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="pwd">新密码:</label>
+                            <input type="password" value="{{ password2 }}" required="required" class="form-control"
+                                   id="pwd"
+                                   name="password">
+                            <p class=" text-danger" id="pwd-msg"></p>
+                        </div>
+                        <div class="form-group">
+                            <label for="pwd">新密码确认:</label>
+                            <input type="password" value="{{ password2 }}" required="required" class="form-control"
+                                   id="pwd2"
+                                   name="password">
+                            <p class=" text-danger" id="pwd2-msg"></p>
+                        </div>
+
+                        <button type="submit"  class="btn btn-primary">修改</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block js %}
+<script>
+
+
+function checkPassword() {
+            if ($('#pwd').val().length >= 8 && $('#pwd-msg').text() == "" && $('#pwd2-msg').text() == "")
+                return true;
+            else
+                return false;
+        }
+
+
+$(function () {
+        $('button#codebtn').click(function () {
+            var email = $('#email').val();
+            if (/^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)/.test(email)) {
+
+                $('#email-msg').text("");
+                $(this).attr("disabled", "true");
+                $.get("/getvcode?email=" + email, function (data, status) {
+                    console.log(data)
+                    if (data.status == "success") {
+                        var time = 60;
+                        // console.log( $(this).text()+"text");
+                        $(this).attr("disabled", "true");
+                        var inter = setInterval(function () {
+                            $('button#codebtn').text(time-- + "s")
+                        }, 1000)
+                        setTimeout(function () {
+                            clearInterval(inter);
+                            $('button#codebtn').removeAttr("disabled");
+                            $('button#codebtn').text("获取验证码")
+                        }, 60000)
+                    } else {
+                        $('#email-msg').text('账户已存在')
+                        $('button#codebtn').removeAttr("disabled");
+                    }
+                });
+            } else {
+                $('#email-msg').text("格式不正确");
+            }
+
+        })
+        $('input#email').keyup(function () {
+            $('#email-msg').text("");
+
+        })
+
+
+        $('#pwd').keyup(function () {
+            if ($(this).val().length < 8 || $(this).val().length > 16) {
+                $('#pwd-msg').text("密码长度在8-16位")
+            } else {
+                $('#pwd-msg').text("")
+            }
+        })
+        $('#pwd2').keyup(function () {
+            if ($(this).val() != $('#pwd').val()) {
+                $('#pwd2-msg').text("密码不一致");
+            } else {
+                $('#pwd2-msg').text("")
+            }
+        })
+
+    })
+
+</script>
+
+{% endblock %}

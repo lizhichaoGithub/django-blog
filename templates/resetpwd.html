@@ -1,17 +1,7 @@
 {% extends 'layout.html' %}
+{% block container %}
+<form method="POST" action="/reset" class="p-4 mt-4">
 
-{% block head %}
-    <title>注册</title>
-{% endblock %}
-{% block body %}
-    <div class="container p-5 mt-5" style="background-color: rgb(233,236,239);width: 50%;border-radius: 30px;">
-        <form method="POST" action="/register">
-            <div class="form-group">
-                <label>昵称:<p class="text-danger" id="nickname-msg">{{ nickname_msg }}</p></label>
-                <input type="text" value="{{ nickname }}" required="required" class="form-control" id="nickname"
-                       name="nickname">
-                <p class=" text-danger" id="nickname-msg"></p>
-            </div>
             <div class="form-group">
                 <label for="email">邮箱:<p class="text-danger" id="email-msg">{{ email_msg }}</p></label>
                 <input type="email" value="{{ email }}" class="form-control" required="required" id="email"
@@ -34,17 +24,14 @@
                 <label for="pwd">重复密码:</label>
                 <input type="password" value="{{ password2 }}" required="required" class="form-control" id="pwd2"
                        name="password2">
-                <p class=" text-danger" id="pwd2-msg"></p>
+                <p class=" text-danger" id="pwd2-msg">{{ pwd2_msg }}</p>
             </div>
 
             <button type="submit" onsubmit="checkPassword()" class="btn btn-primary">注册</button>
         </form>
-    </div>
-    <br/>
-    <div class="container">
 
-    </div>
 {% endblock %}
+
 {% block js %}
 <script>
     $(function () {
@@ -54,7 +41,7 @@
 
                 $('#email-msg').text("");
                 $(this).attr("disabled", "true");
-                $.get("/getvcode?email=" + email +'&t=zc', function (data, status) {
+                $.get("/getvcode?email=" + email +'&t=cz', function (data, status) {
                     console.log(data)
                     if (data.status == "success") {
                         var time = 60;
@@ -68,8 +55,8 @@
                             $('button#codebtn').removeAttr("disabled");
                             $('button#codebtn').text("获取验证码")
                         }, 60000)
-                    } else {
-                        $('#email-msg').text('账户已存在')
+                    } else if(data.msg == 'user_not_existed'){
+                        $('#email-msg').text('账户不存在')
                         $('button#codebtn').removeAttr("disabled");
                     }
                 });

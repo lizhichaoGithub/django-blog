@@ -9,7 +9,7 @@
 {% block body %}
 
 <div class="container p-5 mt-5" style="background-color: rgb(233,236,239);width: 50%;border-radius: 30px;">
-    <form  method="POST" action="/login">
+    <form  method="POST" action="/login?next={{ next }}">
         <div class="form-group">
             <label for="email">邮箱:</label>
             <input type="email" required="required" class="form-control" id="email" name="username" value="{{ email }}">
@@ -17,7 +17,7 @@
         </div>
         {% csrf_token %}
         <div class="form-group">
-            <label for="pwd">密码:</label>
+            <label for="pwd">密码:<a class="text-muted" href="reset"> 忘记密码?</a> </label>
             <input type="password" class="form-control" required="required" id="pwd" name="password" value="{{ password }}">
             <p class=" text-danger" id="pwd-msg">{{ pwd_msg }}</p>
         </div>

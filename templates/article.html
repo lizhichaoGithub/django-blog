@@ -2,24 +2,142 @@
 
 {% block head %}
     <title>{{ article.title }}</title>
+    <script src="https://cdn.staticfile.org/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+    <style>
+    img{
+        max-width: 100%;
+        height: auto;
+    }
+
+    </style>
 {% endblock %}
 
-{% block body %}
-    <div class="container p-0 " >
-        <div class="jumbotron" style="min-height: 500px;">
+{% block container %}
+    <div class="container p-0 ">
+        <div class="jumbotron">
 
 
             <div class="card">
-                <div class="card-header  text-center p-3">
-                    <h3>{{ article.title }}</h3>
-                    <div class="card-subtitle text-muted  text-center p-3"><a
-                            href="userzone?username={{ user.nickname }} }}">{{ article.username }}</a>&nbsp;&nbsp;{{ article.date }}
+                <div class="card-header  text-center p-3 d-flex justify-content-center">
+                    <div>
+                        <h3>{{ article.title }}</h3>
                     </div>
+                    <div class="text-center ml-3">
+                        {{ article.good }}
+
+                    </div>
+
                 </div>
-                <div class="card-body  text-center p-3">
-                    <div class="card-text">{{ article.content }}</div>
+                <div class="card-body p-3">
+                    <div class="card-subtitle text-muted  text-center p-3"><a
+                            href="userzone?nickname={{ article.username }}">{{ article.username }}</a>&nbsp;&nbsp;{{ article.date }}
+                    </div>
+                    <div class="card-text">{{ article.content|safe }}</div>
                 </div>
             </div>
         </div>
+        <form>
+            <div class="form-group">
+
+                <label for="email">评论:</label>
+                <input type="text" required="required" class="form-control" id="comment" name="comment">
+                <p class="text-danger" id="comment-msg">{{ comment_msg }}</p>
+                <input type="hidden" class="form-control" id="commenter" name="commenter" value="{{ user.nickname }}">
+                <input type="hidden" class="form-control" id="aid" name="aid" value="{{ article.id }}">
+
+            </div>
+            {% csrf_token %}
+            <a class="btn btn-primary text-light" id="lg">提交</a>&nbsp;
+        </form>
+
+        <div class="row" id="comment-area">
+                        {% for comment in comments %}
+                            <div class="col-12 p-3">
+                                <h3>{{ comment.commenter }}:</h3>
+                                <p>{{ comment.content }}</p>
+                            </div>
+                        {% empty %}
+                            <div class="col-12 p-3">
+                                <h3>没有评论了~~</h3>
+                            </div>
+
+                        {% endfor %}
+        </div>
     </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+        var aid = null;
+
+        function getUrlParam(name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+            var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+            if (r != null) return unescape(r[2]);
+            return null; //返回参数值
+        }
+
+        function postComment() {
+            var commenter = $('#commenter').val();
+            var content = $('#comment').val();
+            $.post('/comment',
+                {
+                    'content': content,
+                    'commenter': commenter,
+                    'aid': aid,
+                    'csrfmiddlewaretoken': jQuery.cookie('csrftoken')
+                }
+                ,
+                function (data) {
+                    console.log(data);
+                    addComment(data)
+                })
+
+
+        }
+
+        function addComment(c) {
+
+            var div = `
+                <h3>${c.commenter} :</h3>
+                <text class="text-muted">${c.date}</text>
+                <p>${c.content}</p>`
+            var col = document.createElement('div');
+            col.setAttribute('class','col-12 p-3');
+            col.innerHTML = div
+            $('#comment-area').prepend(col);
+
+        }
+
+        function loadComments() {
+            $.post('/getcomments',
+                {'aid': aid, 'csrfmiddlewaretoken': jQuery.cookie('csrftoken')}
+                ,
+                function (data) {
+                  //  console.log(data);
+                    for(var i=0;i<data.length;++i){
+                        addComment(data[i]);
+                    }
+
+                })
+        }
+
+        $(function () {
+            aid = getUrlParam('aid')
+            if (aid != null)
+                  loadComments()
+
+
+            $('#lg').click(function (e) {
+
+                if (aid != null)
+                    postComment()
+                return false;
+            })
+
+        })
+
+
+    </script>
+
 {% endblock %}
