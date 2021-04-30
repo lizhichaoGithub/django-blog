@@ -22,8 +22,8 @@ EMAIL_HOST = 'smtp.qq.com'
 # 设置端口号，为数字
 EMAIL_PORT = 25
 #设置发件人邮箱
-EMAIL_HOST_USER = '1693922728@qq.com'
-EMAIL_HOST_PASSWORD = 'lfbzzjjxhvunbedc'
+EMAIL_HOST_USER = '**********'
+EMAIL_HOST_PASSWORD = '***********'
 # 设置是否启用安全链接
 EMAIL_USER_TLS = True
 AUTH_USER_MODEL = 'blog.User'
@@ -34,7 +34,7 @@ AUTH_USER_MODEL = 'blog.User'
 SECRET_KEY = 'django-insecure-apx1l!sae6x=7zuqw#48w)=a)66du7b#-v32xq9#t=zyc2$2hf'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
