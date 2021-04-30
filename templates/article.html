@@ -22,10 +22,10 @@
                     <div>
                         <h3>{{ article.title }}</h3>
                     </div>
-                    <div class="text-center ml-3">
-                        {{ article.good }}
-
-                    </div>
+{#                    <div class="text-center ml-3">#}
+{#                        {{ article.good }}#}
+{##}
+{#                    </div>#}
 
                 </div>
                 <div class="card-body p-3">
@@ -36,6 +36,7 @@
                 </div>
             </div>
         </div>
+    {% if user.is_authenticated %}
         <form>
             <div class="form-group">
 
@@ -49,7 +50,9 @@
             {% csrf_token %}
             <a class="btn btn-primary text-light" id="lg">提交</a>&nbsp;
         </form>
-
+    {% else %}
+            <label>登录可进行评论</label>
+    {% endif %}
         <div class="row" id="comment-area">
                         {% for comment in comments %}
                             <div class="col-12 p-3">

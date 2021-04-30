@@ -1,3 +1,5 @@
+from email.header import Header
+from email.mime.text import MIMEText
 from sqlite3 import IntegrityError
 
 from django.contrib.auth import authenticate, login, logout
@@ -8,12 +10,32 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.core.mail import send_mail, send_mass_mail, EmailMultiAlternatives
 from django.conf import settings
+import smtplib
 import random
 import json, time
 import markdown2
-
-# Create your views here.
+from mysite import settings
 from django.urls import reverse
+# Create your views here.
+
+
+def sendMail(recv, code):
+    sender = '1693922728@qq.com'
+    msg = MIMEText('验证码: ' + str(code))
+    msg['From'] = Header('混沌')
+    msg['Subject'] = Header('验证')
+    try:
+        smtp = smtplib.SMTP_SSL(settings.EMAIL_HOST,465)
+        smtp.connect(settings.EMAIL_HOST,465)
+        smtp.ehlo(settings.EMAIL_HOST)
+        smtp.login(settings.EMAIL_HOST_USER,settings.EMAIL_HOST_PASSWORD)
+        res = smtp.sendmail(sender,recv,msg.as_string())
+        smtp.quit()
+        return 1
+    except:
+        return 0
+
+
 
 
 def resetpwd(req):
@@ -165,15 +187,12 @@ def getvcode(req):
     if req.method == 'GET':
         email = req.GET.get('email')
         type = req.GET.get('t')
+        print(type)
         if type == 'cz':
             if not isuserexist(email):
                 return HttpResponse(json.dumps({'status': 'fail', 'msg': 'user_not_existed'}), content_type="application/json")
             code = random.randint(1000, 9999)
-            res = send_mail('【混沌空间】验证码',
-                            '密码重置验证码为:' + str(code) + '，如果不是你本人操作，请忽略此邮件',
-                            '1693922728@qq.com',
-                            [email],
-                            fail_silently=False)
+            res = sendMail([email],code)
             if res == 1:
                 result = {'status': 'success'}
                 req.session['vcode'] = str(code)
@@ -184,11 +203,7 @@ def getvcode(req):
             result = {}
             if not isuserexist(email):
                 code = random.randint(1000, 9999)
-                res = send_mail('【混沌空间】注册验证码',
-                                '注册验证码为:' + str(code) + '，如果不是你本人操作，请忽略此邮件',
-                                '1693922728@qq.com',
-                                [email],
-                                fail_silently=False)
+                res = sendMail([email],code)
                 if res == 1:
                     result = {'status': 'success'}
                     req.session['vcode'] = str(code)

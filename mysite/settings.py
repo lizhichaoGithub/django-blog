@@ -34,15 +34,15 @@ AUTH_USER_MODEL = 'blog.User'
 SECRET_KEY = 'django-insecure-apx1l!sae6x=7zuqw#48w)=a)66du7b#-v32xq9#t=zyc2$2hf'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
+    
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
